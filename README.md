@@ -1,2 +1,4 @@
-# DA-Bessel Approach for Prolonged Motor Movement Detection
-This repository contains the code used to classify a set of sub-gestures from a EEG-based continuous motor movement using the DA-Bessel approach.
+# Cooperative Classification of Prolonged Movement from EEG for BCI without Feedback
+This repository contains the code used to classify a set of sub-gestures from EEG-based continuous motor movement using the approach proposed in [1].
+
+[1] 
