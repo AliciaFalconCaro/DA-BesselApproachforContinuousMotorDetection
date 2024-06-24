@@ -1,0 +1,54 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: HyperCSP
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Alicia
+    family-names: Falcon Caro
+    orcid: 'https://orcid.org/0000-0002-1085-7716'
+  - given-names: Sepehr
+    family-names: Shirani
+  - given-names: Joao Filipe
+    family-names: Ferreira
+  - given-names: Jordan J.
+    family-names: Bird
+  - given-names: Saeid
+    family-names: Sanei
+identifiers:
+  - type: doi
+    value: 10.1109/TBME.2024.3356665
+  - type: doi
+    value: 10.5281/zenodo.10523773
+repository-code: 'https://github.com/AliciaFalconCaro/HyperCSP/'
+repository: 'https://zenodo.org/records/10564857'
+abstract: >-
+  This work proposes a new formulation for common spatial
+  patterns (CSP), often used as a powerful feature
+  extraction technique in brain-computer interfacing (BCI)
+  and other neurological studies. In this approach, applied
+  to multiple subjects’ data and named as hyperCSP, the
+  individual covariance and mutual correlation matrices
+  between multiple simultaneously recorded subjects’
+  electroencephalograms are exploited in the CSP
+  formulation. This method aims at effectively isolating the
+  common motor task between multiple heads and alleviate the
+  effects of other spurious or undesired tasks inherently or
+  intentionally performed by the subjects. This technique
+  can provide a satisfactory classification performance
+  while using small data size and low computational
+  complexity. By using the proposed hyperCSP followed by
+  support vector machines classifier, we obtained a
+  classification accuracy of 81.82% over 8 trials in the
+  presence of strong undesired tasks. We hope that this
+  method could reduce the training error in multi-task BCI
+  scenarios. The recorded valuable motor-related
+  hyperscanning dataset is available for public use to
+  promote the research in this area.
+license: CC-BY-NC-4.0
+version: v1.3
+date-released: '2024-02-05'
