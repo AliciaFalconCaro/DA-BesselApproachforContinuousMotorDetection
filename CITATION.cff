@@ -16,7 +16,5 @@ authors:
   - given-names: Saeid
     family-names: Sanei
 repository-code: 'https://github.com/AliciaFalconCaro/DABesselMotorDetection/'
-abstract: >-
-This paper presents a novel approach for the recognition of a prolonged motor movement from a subject’s electroencephalogram (EEG) using orthogonal functions to model a sequence of sub-gestures. In this approach, the individual’s EEG signals corresponding to physical (or imagery) continuous movement for different gestures are divided into segments associated with their related sub-gestures. Then, a diffusion adaptation approach is introduced to model the interface between the brain neural activity and the corresponding gesture dynamics. In such a formulation, orthogonal Bessel functions are utilized to represent different gestures and used as the target for the adaptation algorithm. This method aims at detecting and evaluating the prolonged motor movements as well as identifying highly complex sub-gestures. This technique can perform satisfactory classification even in the presence of small data sizes while, unlike many regressors, maintaining a low computational cost. The method has been validated using two different publicly available EEG datasets. An average inter-subject validation accuracy of 98.10% is obtained for the smallest dataset during the classification of ten estimated sub-gestures.
 license: MIT License
 date-released: '2024-06-24'
