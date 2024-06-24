@@ -11,11 +11,11 @@ Falcon-Caro, A., Ferreira, J. F. & Sanei, S. (2024). Cooperative Classification 
 
 This resource is released under a MIT License.
 
-# Instructions for running DAOT code with your own data:
+## Instructions for running DAOT code with your own data:
   1. Download and add the MVGC Toolbox [2] to your MATLAB Path.
   2. The Diffusion Adaptation with Orthogonal Target method (DAOT) can be found in file "". You can run this file once your data has been preprocessed and the Granger causality and Bessel basis function dictionary obtained.
 
-# Instructions for running the examples code:
+## Instructions for running the examples code:
 There are 3 examples:
   - Example with Dataset 1 [3] as described in the paper for the recognition of 2 sequences of sub-gestures, each with 4 sub-gestures, when the Bessel function dictionary is 2/3 the total number of sub-gestures.
   - Example with Dataset 1 [3] as described in the paper for the recognition of 2 sequences of sub-gestures, each with 4 sub-gestures, when the Bessel function dictionary is the same size as the total number of sub-gestures.
