@@ -11,6 +11,8 @@ Falcon-Caro, A., Ferreira, J. F. & Sanei, S. (2024). Cooperative Classification 
 
 This resource is released under a MIT License.
 
+---
+
 ## Instructions for running DAOT code with your own data:
   1. Download and add the MVGC Toolbox [2] to your MATLAB Path.
   2. The Diffusion Adaptation with Orthogonal Target method (DAOT) can be found in file "". You can run this file once your data has been preprocessed and the Granger causality and Bessel basis function dictionary obtained.
