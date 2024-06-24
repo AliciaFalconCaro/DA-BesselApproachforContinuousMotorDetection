@@ -14,8 +14,8 @@ This resource is released under a MIT License.
 ---
 
 ## Instructions for running DAOT code with your own data:
-  1. Download and add the MVGC Toolbox [2] to your MATLAB Path.
-  2. The Diffusion Adaptation with Orthogonal Target method (DAOT) can be found in file "". You can run this file once your data has been preprocessed and the Granger causality and Bessel basis function dictionary obtained.
+  1. Download and add the MVGC Toolbox [2] to your MATLAB Path and initialize the Toolbox.
+  2. The Diffusion Adaptation with Orthogonal Target method (DAOT) can be found in file "DA_Modeling.m". You can run this file once your data has been preprocessed and the Granger causality and Bessel basis function dictionary obtained.
 
 ## Instructions for running the examples code:
 There are 3 examples:
@@ -24,9 +24,10 @@ There are 3 examples:
   - Example with Dataset 2 [4] as described in the paper for the recognition of 4 sub-gestures, when the Bessel function dictionary is the same size as the total number of sub-gestures.
 
 Steps to follow:
-  1. Download and add the MVGC Toolbox [2] to your MATLAB Path.
-  2. Dowload and add the respective Dataset to your MATLAB Path.
-  3. Run the script associated with your desired example.
+  1. Download and add the MVGC Toolbox [2] to your MATLAB Path and initialize the Toolbox.
+  2. Add all the provided files to your MATLAB Path.
+  3. Dowload and add the respective Dataset to your MATLAB Path.
+  4. Run the script associated with your desired example.
      
 ---
 
