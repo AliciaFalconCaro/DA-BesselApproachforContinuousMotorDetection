@@ -1,4 +1,4 @@
-# Cooperative Classification of Prolonged Movement from EEG for BCI without Feedback
+# Cooperative Identification of Prolonged Motor Movement from EEG for BCI without Feedback
 This repository contains the code used to recognise sequence of sub-gestures as well as complex fine movements (sub-gestures) from EEG-based continuous motor movement using the approach proposed in [1].
 
 The code provided here was tested on MATLAB2022b and makes use of an adaptation of the MVGC v1.3 Toolbox  [2] for the calculation of the Granger causality measures.
@@ -7,7 +7,7 @@ The code provided here was tested on MATLAB2022b and makes use of an adaptation 
 # Citation
 **Please cite this repository as:**
 
-Falcon-Caro, A., Ferreira, J. F. & Sanei, S. (2024). Cooperative Classification of Prolonged Movement from EEG for BCI without Feedback.
+Falcon-Caro, A., Ferreira, J. F. & Sanei, S. (2024). Cooperative Identification of Prolonged Motor Movement from EEG for BCI without Feedback.[under review]
 
 This resource is released under a MIT License.
 
