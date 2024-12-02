@@ -176,7 +176,7 @@ fprintf('Average AUC: %.3f ± %.3f\n', mean(ValaucScore), std(ValaucScore, 1));
 
 %% Final testing with blind data using best performance Model based on F-Score:
 
-TrainedNet=trainedNetworks{1}.net;
+TrainedNet=trainedNetworks{1}.net; %model to be selected from the saved models from the k-fold crossvalidation
 ShuffledTestingData=shuffle(subsetTesting);
 TestingData=readall(ShuffledTestingData);
 TestingTable = cell2table(TestingData,...
