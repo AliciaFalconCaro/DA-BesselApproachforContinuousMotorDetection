@@ -5,6 +5,8 @@ for i=1:NumberSegments
     DataSegment = hyperscanningData(:,:,i);
     %remove bad channels, the same for all the subjects (27,32)
     BadChannelRemovedData=[DataSegment(1:26,:);DataSegment(28:31,:);DataSegment(33:53,:);DataSegment(55:63,:)];
+    %rereferencing not applied because it could affect the connectivity
+    %measures.
     FilteredData = (bandpass(BadChannelRemovedData',[HighFilter LowFilter],Fs))';
     DataRemovedBaseline=FilteredData - mean(FilteredData,2);
     NewData(:,:,i)=DataRemovedBaseline;
@@ -16,6 +18,11 @@ for i=1:NumberSegments
 
     ConnNetworkMatrixSubject1(:,:,i)=granger_cause(DataSegmentSubject1);
     ConnNetworkMatrixSubject2(:,:,i)=granger_cause(DataSegmentSubject2);
+
+    %for EEGnet/SCCNet
+    %ConnNetworkMatrixSubject1(:,:,i)=zeros(size(DataSegmentSubject1,1),size(DataSegmentSubject1,2));
+    %ConnNetworkMatrixSubject2(:,:,i)=zeros(size(DataSegmentSubject1,1),size(DataSegmentSubject1,2));
+
 
 end
 
