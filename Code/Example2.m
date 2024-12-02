@@ -87,4 +87,4 @@ else
 end
 
 %% Compute DAOT-CNN 
- DAOT_CNN_EEG_BCI
+ DAOT_CNN_EEG_BCI_SubgesturesClassification
