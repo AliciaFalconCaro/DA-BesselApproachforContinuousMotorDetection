@@ -9,7 +9,9 @@ for i=1:NumberSegments
     NewData(:,:,i)=DataRemovedBaseline;
 
     %Connectivity Measure per segment
-    ConnNetworkMatrix(:,:,i)=granger_cause(DataSegment);
+    %ConnNetworkMatrix(:,:,i)=granger_cause(DataSegment);
+    %for EEGnet/SCCNet
+    ConnNetworkMatrix(:,:,i)=zeros(size(DataSegment,1),size(DataSegment,2));
 end
 
 ContinuousData=[];
