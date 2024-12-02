@@ -30,60 +30,138 @@ for i=1:ClassifierParameters.NumberSubjects
     save(filename,'combinedCells');
 end
 
+%% Load data from datastores
 filepath=strcat(ClassifierParameters.DatastorefilePath,'/*.mat');
 filedatastore = fileDatastore(filepath,'ReadFcn',@load);
 EEGData = transform(filedatastore,@rearrangeData);
 
-%% classify: training,validation and testing
-trainRatio = 0.7;
-ValidationRatio=0.2;
+
+%% classify: validation and CNN
+%% Crossvalidation:5-folds
+%divide into training and testing
+trainRatio = 0.9;
+TestingRatio=0.1;
 TotalIndices=1:ClassifierParameters.NumberSubjects;
+miniBatchSize=8;
 
-indicesTraining = TotalIndices(1:floor(ClassifierParameters.NumberSubjects*trainRatio));
-indicesValidation = TotalIndices(floor(ClassifierParameters.NumberSubjects*trainRatio)+1:floor(ClassifierParameters.NumberSubjects*trainRatio)+floor(ClassifierParameters.NumberSubjects*ValidationRatio));
-indicesTesting = TotalIndices(floor(ClassifierParameters.NumberSubjects*trainRatio)+floor(ClassifierParameters.NumberSubjects*ValidationRatio)+1:end);
+%split training/validation and testing
+indicesTrainingValidation = TotalIndices(1:floor(ClassifierParameters.NumberSubjects*trainRatio));
+indicesTesting = TotalIndices(floor(ClassifierParameters.NumberSubjects*trainRatio)+1:end);
 
-subsetTraining = subset(EEGData,indicesTraining);
-subsetValidation = subset(EEGData,indicesValidation);
+subsetTrainingValidation = subset(EEGData,indicesTrainingValidation);
 subsetTesting=subset(EEGData,indicesTesting);
 
-ShuffledTrainingData=shuffle(subsetTraining);
-ShuffledValidationData=shuffle(subsetValidation);
+%Training CNN with kfold cross-validation
 
-%CNN definition
 layers = [
     imageInputLayer([ClassifierParameters.Num_channels ClassifierParameters.SegmentLength],'Name','input')  
     convolution2dLayer(4,8,'Padding','same','Name','conv_1')
      batchNormalizationLayer('Name','BN_1')
     reluLayer('Name','relu_1')
+
     convolution2dLayer(4,8,'Padding','same','Name','conv_2')
      batchNormalizationLayer('Name','BN_2')
     reluLayer('Name','relu_2')
 
     fullyConnectedLayer(ClassifierParameters.NumClassesClassifier,'Name','fc11')
-    softmaxLayer('Name','softmax')
-    classificationLayer('Name','classOutput')];
+    softmaxLayer('Name','softmax')];
 
-options = trainingOptions("adam", ...
+% Split Data into k Folds
+cv = cvpartition(indicesTrainingValidation, 'LeaveOut');
+k=cv.NumTestSets;
+
+
+% Initialize arrays to store metrics for each fold
+ValAccuracy = zeros(k, 1);
+ValfScore = zeros(k, 1);
+ValaucScore = zeros(k, 1);
+confMatrixSum = zeros(ClassifierParameters.NumClassesClassifier, ClassifierParameters.NumClassesClassifier);
+ConfusionMatrixPerFold = zeros(ClassifierParameters.NumClassesClassifier, ClassifierParameters.NumClassesClassifier, k);
+trainedNetworks = cell(k, 1); % Cell array to store each fold's network
+
+for fold = 1:k
+    % Create training and validation sets for this fold
+    indicesTraining = training(cv, fold);
+    indicesValidation = test(cv, fold);
+    subsetTraining = subset(subsetTrainingValidation,indicesTraining);
+    subsetValidation = subset(subsetTrainingValidation,indicesValidation);
+
+    % shuffle data and train network
+    ShuffledTrainingData=shuffle(subsetTraining);
+    ShuffledValidationData=shuffle(subsetValidation);
+
+    options = trainingOptions("adam", ...
+    "Acceleration","none",...
+    "ExecutionEnvironment", "cpu",...
     "MaxEpochs",30, ...
-    "MiniBatchSize",8, ...
+    "ValidationData",ShuffledValidationData, ...
+    "Metrics", "accuracy", ...
+    "MiniBatchSize",miniBatchSize, ...
     "Shuffle","every-epoch",...
     "InitialLearnRate",0.001,...
     "Plots","training-progress",...
-    "ValidationData",ShuffledValidationData,...
     "L2Regularization",1e-2,...
-    "OutputNetwork","best-validation-loss",...
+    "OutputNetwork","best-validation",...
     "Verbose", false);
 
-trainedNetSPN = trainNetwork(ShuffledTrainingData,layers,options);
+    [trainedNetSPN, info] = trainnet(ShuffledTrainingData,layers,"crossentropy",options);
 
+    trainedNetworks{fold}.net = trainedNetSPN;
+    trainedNetworks{fold}.info = info;
+
+    % Validate on the validation set
+    ValidationData=readall(ShuffledValidationData);
+    ValTable = cell2table(ValidationData,...
+    "VariableNames",["Signal" "Label"]);
+    Yval = ValTable.Label;
+    classNames=cellstr(unique(Yval));
+    YPredScores = minibatchpredict(trainedNetSPN, ShuffledValidationData, MiniBatchSize=miniBatchSize, ExecutionEnvironment="cpu");
+    YPred = scores2label(YPredScores,classNames);
+    
+    %Validation Accuracy
+    ValAccuracy(fold) = testnet(trainedNetSPN, ShuffledValidationData, "accuracy", miniBatchSize=miniBatchSize);
+
+    % Average F-score and AUC across classes for this fold
+    ValfScore(fold) = testnet(trainedNetSPN, ShuffledValidationData, "fscore", miniBatchSize=miniBatchSize);
+    ValaucScore(fold) = testnet(trainedNetSPN, ShuffledValidationData, "auc", miniBatchSize=miniBatchSize);
+
+    % Calculate the confusion matrix for this fold
+    foldConfMatrix = confusionmat(Yval, YPred,'Order', unique(Yval));
+    confMatrixSum = confMatrixSum + foldConfMatrix;
+    ConfusionMatrixPerFold(:,:,fold)=foldConfMatrix;
+
+end
+
+% Calculate the average confusion matrix
+avgConfMatrix = confMatrixSum / k;
+
+% Display average cross-validation metrics
+fprintf('Average Cross-Validation Metrics:\n');
+fprintf('Average Accuracy: %.3f ± %.3f\n', mean(ValAccuracy), std(ValAccuracy, 1));
+fprintf('Average F-Score: %.3f ± %.3f\n', mean(ValfScore), std(ValfScore, 1));
+fprintf('Average AUC: %.3f ± %.3f\n', mean(ValaucScore), std(ValaucScore, 1));
+
+
+
+%% Final testing with blind data using best performance Model based on F-Score:
+
+TrainedNet=trainedNetworks{4}.net; %model to be selected from the saved models from the k-fold crossvalidation
 ShuffledTestingData=shuffle(subsetTesting);
-YPred = classify(trainedNetSPN,ShuffledTestingData);
-
 TestingData=readall(ShuffledTestingData);
 TestingTable = cell2table(TestingData,...
     "VariableNames",["Signal" "Label"]);
 Ytest = TestingTable.Label;
-accuracy = mean(YPred == Ytest);
+classNames=cellstr(unique(Ytest));
+
+YPredScores = minibatchpredict(TrainedNet, ShuffledTestingData, MiniBatchSize=miniBatchSize, ExecutionEnvironment="cpu");
+YPred = scores2label(YPredScores,classNames);
+
+TestingAcc=testnet(TrainedNet, ShuffledTestingData,"accuracy", miniBatchSize=miniBatchSize);
+Testing_fscore=testnet(TrainedNet, ShuffledTestingData,"fscore", miniBatchSize=miniBatchSize);
 
 confusionMatrix = confusionchart(Ytest, YPred,Normalization="column-normalized");
+
+% Display testing metrics
+fprintf(' Testing Metrics:\n');
+fprintf('Testing Accuracy: %.3f\n', TestingAcc);
+fprintf('Testing F-Score: %.3f\n', Testing_fscore);
