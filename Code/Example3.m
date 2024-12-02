@@ -1,6 +1,8 @@
 %% Dataset 2 preprocessing and Bessel functions estimation
 % Data to test: http://gigadb.org/dataset/100295
+
 clear all; clc;
+tic
 filepath=fullfile("Data"); 
 Ds = fileDatastore(filepath,"ReadFcn",@load,IncludeSubFolders=true);
 p=endsWith(Ds.Files,".mat");
@@ -13,8 +15,7 @@ Parameters.HighFilter=8;
 Parameters.MaxSegmentLength=1; 
 Parameters.NuEtaRatio=1; %nu-to-eta ratio: 0.1-1 (nu: size dictionary of orthogonal functions - number of available Bessel functions)
 Parameters.NumberSubGestures=4; %finger gestures
-DirectoryPath = what('DAModeledGesturesPerSubject');
-ClassifierParameters.DatastorefilePath= DirectoryPath.path;
+ClassifierParameters.DatastorefilePath= 'C:\Users\CMP3FALCOA\Downloads\OneDrive_1_18-10-2024\DAOT-CNN_MultiMovementDataset1\DAModeledGesturesPerSubject';
 ClassifierParameters.NumClassesClassifier=Parameters.NumberSubGestures;
 
 %% process data (data segmentation and labelling) and basic preprocessing (bad channel removal and bandpass filtering)
@@ -57,25 +58,24 @@ for i=1:SizeDictionary
     BesselFunctions_Reduced(i,:)=besselj(i,NumberSamplesBessel); 
 end 
 
-if (SizeDictionary<Parameters.NumberSubGestures) %Some orthogonal functions will be assigned to similar sub-gestures when nu-to-eta ratio < 1. The assigment of Bessel functions can be modified.
+%% if (SizeDictionary<Parameters.NumberSubGestures): Some orthogonal functions will be assigned to similar sub-gestures.
     for i=1:Parameters.NumberSubGestures
-        if (i==4 || i==5)
-             BesselFunctions(i,:)=BesselFunctions_Reduced(1,:);
-        elseif (i==2 || i==3)
+        if (i==1)
+            BesselFunctions(i,:)=BesselFunctions_Reduced(1,:);
+        elseif (i==4)
               BesselFunctions(i,:)=BesselFunctions_Reduced(2,:);
-        elseif (i==6 || i == 7)
-              BesselFunctions(i,:)=BesselFunctions_Reduced(3,:);
-        elseif (i==1)
-            BesselFunctions(i,:)=BesselFunctions_Reduced(4,:);
+%         elseif (i==2 || i == 3)
+%             BesselFunctions(i,:)=BesselFunctions_Reduced(3,:);
+%         elseif (i==4)
+%             BesselFunctions(i,:)=BesselFunctions_Reduced(4,:);
+%         elseif (i==7)
+%             BesselFunctions(i,:)=BesselFunctions_Reduced(5,:);
+        % elseif ( i==8 ) 
+        %     BesselFunctions(i,:)=BesselFunctions_Reduced(6,:);
         else
-            BesselFunctions(i,:)=BesselFunctions_Reduced(5,:);
+            BesselFunctions(i,:)=BesselFunctions_Reduced(3,:);
         end
     end
-else
-    for i=1:Parameters.NumberSubGestures
-        BesselFunctions(i,:)=BesselFunctions_Reduced(i,:);
-    end
-end
 
 %% Compute DAOT-CNN 
 DAOT_CNN_EEG_BCI_SubgesturesClassification
