@@ -15,7 +15,8 @@ Parameters.HighFilter=8;
 Parameters.MaxSegmentLength=1; 
 Parameters.NuEtaRatio=1; %nu-to-eta ratio: 0.1-1 (nu: size dictionary of orthogonal functions - number of available Bessel functions)
 Parameters.NumberSubGestures=4; %finger gestures
-ClassifierParameters.DatastorefilePath= 'C:\Users\CMP3FALCOA\Downloads\OneDrive_1_18-10-2024\DAOT-CNN_MultiMovementDataset1\DAModeledGesturesPerSubject';
+DirectoryPath = what('DAModeledGesturesPerSubject');
+ClassifierParameters.DatastorefilePath= DirectoryPath.path;
 ClassifierParameters.NumClassesClassifier=Parameters.NumberSubGestures;
 
 %% process data (data segmentation and labelling) and basic preprocessing (bad channel removal and bandpass filtering)
